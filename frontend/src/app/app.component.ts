@@ -1,10 +1,15 @@
-import { Component } from '@angular/core';
+// app.component.ts
+import { Component, ElementRef } from '@angular/core';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  templateUrl: './app.component.html'
 })
 export class AppComponent {
-  title = 'frontend';
+  constructor(private themeService: ThemeService, private elRef: ElementRef) {}
+
+  ngOnInit(): void {
+    this.themeService.initializeTheme(document.body);
+  }
 }
