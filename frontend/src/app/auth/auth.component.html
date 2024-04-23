@@ -1,5 +1,5 @@
 <div class="container">
-  <h2>Household Budget</h2>
+  <h2>{{ titleLabel }}</h2>
 
   <mat-form-field appearance="outline">
     <mat-label>Email</mat-label>
@@ -18,4 +18,6 @@
   <button mat-raised-button color="primary" (click)="onSubmit()">
     {{ submitLabel }}
   </button>
+
+  <button mat-button routerLink="/sign-up" *ngIf="this.router.url === '/sign-in'">Register</button>
 </div>

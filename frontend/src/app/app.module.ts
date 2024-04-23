@@ -11,12 +11,15 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { NavigationModule } from "./navigation/navigation.module";
 import { SignInModule } from "./auth/sign-in/sign-in.module";
 import { SignUpModule } from "./auth/sign-up/sign-up.module";
+import { HttpClientModule } from "@angular/common/http";
+import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule } from "@angular/material/snack-bar";
 
 @NgModule({
   declarations: [
     AppComponent
   ],
   imports: [
+    HttpClientModule,
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
@@ -26,9 +29,12 @@ import { SignUpModule } from "./auth/sign-up/sign-up.module";
     ReactiveFormsModule,
     NavigationModule,
     SignInModule,
-    SignUpModule
+    SignUpModule,
+    MatSnackBarModule
   ],
-  providers: [],
+  providers: [
+    {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: 3000, horizontalPosition: 'center', verticalPosition: 'bottom' }},
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
