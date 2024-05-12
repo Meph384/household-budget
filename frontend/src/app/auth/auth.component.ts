@@ -1,11 +1,18 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { FormControl, Validators } from "@angular/forms";
-import { Router } from "@angular/router";
+import { FormControl, Validators, ReactiveFormsModule } from "@angular/forms";
+import { Router, RouterLink } from "@angular/router";
+import { MatButtonModule } from "@angular/material/button";
+import { NgIf } from "@angular/common";
+import { MatIconModule } from "@angular/material/icon";
+import { MatInputModule } from "@angular/material/input";
+import { MatFormFieldModule } from "@angular/material/form-field";
 
 @Component({
-  selector: 'app-auth',
-  templateUrl: './auth.component.html',
-  styleUrls: ['./auth.component.scss']
+    selector: 'app-auth',
+    templateUrl: './auth.component.html',
+    styleUrls: ['./auth.component.scss'],
+    standalone: true,
+    imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatIconModule, NgIf, MatButtonModule, RouterLink]
 })
 export class AuthComponent {
   constructor(protected router: Router) {}

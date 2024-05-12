@@ -1,12 +1,14 @@
 // app.component.ts
 import { Component, OnInit } from "@angular/core";
 import { ThemeService } from './services/theme.service';
-import { Router } from "@angular/router";
+import { Router, RouterOutlet } from "@angular/router";
 import { AuthService } from "./services/auth.service";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html'
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    standalone: true,
+    imports: [RouterOutlet]
 })
 export class AppComponent implements OnInit {
   constructor(

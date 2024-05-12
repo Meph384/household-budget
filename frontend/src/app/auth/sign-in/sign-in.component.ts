@@ -3,11 +3,14 @@ import { AuthService } from "../../services/auth.service";
 import { HttpErrorResponse } from "@angular/common/http";
 import { MatSnackBar, MatSnackBarRef, TextOnlySnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
+import { AuthComponent } from '../auth.component';
 
 @Component({
-  selector: 'app-sign-in',
-  templateUrl: './sign-in.component.html',
-  styleUrls: ['./sign-in.component.scss']
+    selector: 'app-sign-in',
+    templateUrl: './sign-in.component.html',
+    styleUrls: ['./sign-in.component.scss'],
+    standalone: true,
+    imports: [AuthComponent]
 })
 export class SignInComponent {
   errorMessage: string = "";

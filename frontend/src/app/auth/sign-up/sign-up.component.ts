@@ -2,11 +2,14 @@ import { Component } from '@angular/core';
 import { AuthService } from "../../services/auth.service";
 import { MatSnackBar, MatSnackBarRef, TextOnlySnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
+import { AuthComponent } from '../auth.component';
 
 @Component({
-  selector: 'app-sign-up',
-  templateUrl: './sign-up.component.html',
-  styleUrls: ['./sign-up.component.scss']
+    selector: 'app-sign-up',
+    templateUrl: './sign-up.component.html',
+    styleUrls: ['./sign-up.component.scss'],
+    standalone: true,
+    imports: [AuthComponent]
 })
 export class SignUpComponent {
   errorMessage: string = "";
