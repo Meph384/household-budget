@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import { catchError, map, Observable, of } from "rxjs";
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -17,5 +17,11 @@ export class AuthService {
 
   signin(email: string, password: string): Observable<any> {
     return this.http.post(`${this.baseUrl}/signin`, { email, password });
+  }
+
+  isAuthenticated(): Observable<boolean> {
+    return this.http
+      .get<boolean>(this.baseUrl)
+      .pipe(catchError(() => of(false)));
   }
 }
