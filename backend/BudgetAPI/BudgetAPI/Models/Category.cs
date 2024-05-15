@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BudgetAPI;
+namespace BudgetAPI.Models;
 
-public partial class Category
+public class Category
 {
+    [Key]
     public int CategoryId { get; set; }
-
-    public DateTime CreatedAt { get; set; }
-
-    public DateTime UpdatedAt { get; set; }
-
-    public string Name { get; set; } = null!;
-
-    public string? Description { get; set; }
-
-    public virtual ICollection<FinancialTransaction> FinancialTransactions { get; set; } = new List<FinancialTransaction>();
+    [Column(TypeName="nvarchar(50)")]
+    public string Title { get; set; }
+    [Column(TypeName = "nvarchar(50)")] 
+    public string Icon { get; set; } = "";
+    [Column(TypeName = "nvarchar(10)")] 
+    public string Type { get; set; } = "Expense";
 }

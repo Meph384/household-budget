@@ -1,5 +1,5 @@
-using BudgetAPI;
 using BudgetAPI.Interfaces;
+using BudgetAPI.Models;
 using BudgetAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,13 +7,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddDbContext<BudgetAppContext>(options =>
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+// Ensure database is created and seeded
+builder.Services.BuildServiceProvider().GetService<ApplicationDbContext>().Database.EnsureCreated();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IFinanceRepository, FinanceRepository>();
+
+// Dependency injections
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 builder.Services.AddCors(opt =>
 {
@@ -37,6 +43,8 @@ if (app.Environment.IsDevelopment())
 app.UseCors("CorsPolicy");
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

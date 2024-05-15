@@ -3,12 +3,13 @@ import { Component, OnInit } from "@angular/core";
 import { ThemeService } from './services/theme.service';
 import { Router, RouterOutlet } from "@angular/router";
 import { AuthService } from "./services/auth.service";
+import { NavigationComponent } from "./navigation/navigation.component";
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     standalone: true,
-    imports: [RouterOutlet]
+  imports: [RouterOutlet, NavigationComponent]
 })
 export class AppComponent implements OnInit {
   constructor(
