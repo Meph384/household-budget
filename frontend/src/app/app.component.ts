@@ -4,6 +4,7 @@ import { ThemeService } from './services/theme.service';
 import { Router, RouterOutlet } from "@angular/router";
 import { AuthService } from "./services/auth.service";
 import { NavigationComponent } from "./navigation/navigation.component";
+import { CategoryService } from "./services/category.service";
 
 @Component({
     selector: 'app-root',
@@ -15,12 +16,15 @@ export class AppComponent implements OnInit {
   constructor(
     private themeService: ThemeService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private categoryService: CategoryService
   ) {}
 
   ngOnInit(): void {
     this.themeService.initializeTheme(document.body);
-    this.checkAuthentication();
+    this.categoryService.getAllCategories().subscribe(res => {
+      console.log(res);
+    });
   }
 
   private checkAuthentication(): void {

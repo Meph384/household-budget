@@ -20,6 +20,7 @@ builder.Services.AddSwaggerGen();
 
 // Dependency injections
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 
 builder.Services.AddCors(opt =>
 {
