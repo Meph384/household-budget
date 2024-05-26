@@ -1,0 +1,10 @@
+/* _palettes.scss */
+@use "@angular/material" as mat;
+
+$palettes: (
+  "Spring": mat.$green-palette,
+  "Summer": mat.$yellow-palette,
+  "Fall": mat.$orange-palette,
+  "Winter": mat.$azure-palette
+);
+

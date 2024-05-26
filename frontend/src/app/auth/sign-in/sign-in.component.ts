@@ -1,10 +1,10 @@
 import { Component, OnInit } from "@angular/core";
-import { AuthService } from "../../services/auth.service";
+import { AuthService } from "../../core/services/auth.service";
 import { HttpErrorResponse } from "@angular/common/http";
 import { MatSnackBar, MatSnackBarRef, TextOnlySnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { AuthComponent } from '../auth.component';
-import { FinanceService } from "../../services/finance.service";
+import { TransactionService } from "../../core/services/transaction.service";
 
 @Component({
     selector: 'app-sign-in',
@@ -16,7 +16,7 @@ import { FinanceService } from "../../services/finance.service";
 export class SignInComponent implements OnInit {
   errorMessage: string = "";
   constructor(
-    private finService: FinanceService,
+    private transactionService: TransactionService,
     private authService: AuthService,
     private snackBar: MatSnackBar,
     private router: Router
@@ -25,11 +25,11 @@ export class SignInComponent implements OnInit {
   financeData: any = [];
 
   ngOnInit() {
-    this.getAllFinanceData();
+    // this.getAllFinanceData();
   }
 
   getAllFinanceData() {
-    this.finService.getAllFinanceData().subscribe({
+    this.transactionService.getAllFinanceData().subscribe({
       next: res => {
         console.log(res, " finance data");
       },

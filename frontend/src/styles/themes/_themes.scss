@@ -1,0 +1,101 @@
+@use '@angular/material' as mat;
+@use "sass:map";
+
+@include mat.core();
+
+@import 'palettes';
+
+$theme-map: ();
+
+// generates theme variables for each color and theme type combination and merges them into $theme-map
+// output: $theme-map contains mappings of theme names to color themes for each palette in both dark and light modes
+@each $theme in ("dark", "light") {
+  @each $color, $palette in $palettes {
+    $theme-name: "#{$color}-#{$theme}-theme";
+    $theme-map: map.merge(
+        $theme-map,
+        (
+          $theme-name:
+          mat.define-theme(
+              (
+                color: (
+                  theme-type: $theme,
+                  primary: $palette,
+                ),
+              )
+          ),
+        )
+    );
+  }
+}
+
+$default-dark-theme: mat.define-theme(
+    (
+      color: (
+        theme-type: dark,
+        primary: mat.$violet-palette
+      ),
+      density:
+      (
+        scale: -1
+      ),
+    )
+);
+
+$default-light-theme: mat.define-theme(
+    (
+      color: (
+        theme-type: light,
+        primary: mat.$violet-palette
+      )
+    )
+);
+
+@mixin themable-styles($theme) {
+  .tonal {
+    background-color: mat.get-theme-color($theme, secondary-container);
+    color: mat.get-theme-color($theme, on-secondary-container);
+  }
+
+  .filled-table {
+    --mat-table-row-item-outline-color: mat.get-theme-color($theme, on-secondary-container);
+    background-color: mat.get-theme-color($theme, secondary-container);
+    color: mat.get-theme-color($theme, on-secondary-container);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: mat.get-theme-color($theme, secondary-container) transparent;
+  }
+
+  .secondary-button {
+    @include mat.button-color($theme, $color-variant: secondary);
+  }
+
+  .tertiary-button {
+    @include mat.button-color($theme, $color-variant: tertiary);
+  }
+
+  .warn-button {
+    @include mat.button-color($theme, $color-variant: error);
+  }
+
+  .primary-icon {
+    @include mat.icon-color($theme, $color-variant: primary);
+  }
+
+  .secondary-icon {
+    @include mat.icon-color($theme, $color-variant: secondary);
+  }
+
+  .tertiary-icon {
+    @include mat.icon-color($theme, $color-variant: tertiary);
+  }
+
+  .warn-icon {
+    @include mat.icon-color($theme, $color-variant: error);
+  }
+}
+

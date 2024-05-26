@@ -1,0 +1,62 @@
+@use "variables" as var;
+@use '@angular/material'as mat;
+
+@import "themes/themes";
+
+@include mat.core();
+
+html {
+  @include mat.all-component-themes($default-dark-theme);
+
+  &.violet-dark {
+    @include themable-styles($default-dark-theme);
+  }
+
+  &.violet-light {
+    @include mat.all-component-colors($default-light-theme);
+    @include themable-styles($default-light-theme);
+  }
+
+  @each $color, $palette in $palettes {
+    &.#{$color}-dark {
+      @include mat.all-component-colors(map-get($theme-map, "#{$color}-dark-theme"));
+      @include themable-styles(map-get($theme-map, "#{$color}-dark-theme"));
+    }
+
+    &.#{$color}-light {
+      @include mat.all-component-colors(map-get($theme-map, "#{$color}-light-theme"));
+      @include themable-styles(map-get($theme-map, "#{$color}-light-theme"));
+    }
+  }
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.sidebar-link {
+  --mdc-list-list-item-container-shape: 9999px;
+}
+
+.flex-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.sections-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+
+mat-form-field {
+  width: 100%;
+  max-width: 400px;
+}
