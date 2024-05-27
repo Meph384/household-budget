@@ -1,26 +1,48 @@
 <div class="list-container">
-  <mat-form-field [appearance]="appearance()">
-    <mat-label>Filter elements</mat-label>
-    <input matInput [(ngModel)]="filterValue" (keyup)="applyFilter()">
-    @if(filterValue) {
-      <button matSuffix mat-icon-button aria-label="Clear" (click)="clearFilter()">
-        <mat-icon>close</mat-icon>
-      </button>
-    }
-  </mat-form-field>
+  <div class="date-container">
+    <mat-form-field [appearance]="appearance()">
+      <mat-label>Start Date</mat-label>
+      <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate" (dateChange)="onDateChange($event, 'start')">
+      <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+      <mat-datepicker #startPicker></mat-datepicker>
+    </mat-form-field>
 
-  <mat-form-field [appearance]="appearance()">
-    <mat-label>Filter by Category</mat-label>
-    <mat-select [(value)]="selectedCategoryId" (selectionChange)="applyCategoryFilter($event)">
-      <mat-option value="">All</mat-option>
-      <mat-option *ngFor="let category of categories" [value]="category.categoryId">
-        {{ category.title }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+    <mat-form-field [appearance]="appearance()">
+      <mat-label>End Date</mat-label>
+      <input matInput [matDatepicker]="endPicker" [(ngModel)]="endDate" (dateChange)="onDateChange($event, 'end')">
+      <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+      <mat-datepicker #endPicker></mat-datepicker>
+    </mat-form-field>
+  </div>
 
-  <button mat-icon-button aria-label="Add transaction" (click)="openAddTransactionDialog()">
+  <div class="filter-container">
+    <mat-form-field [appearance]="appearance()">
+      <mat-label>Filter elements</mat-label>
+      <input matInput [(ngModel)]="filterValue" (keyup)="applyFilter()">
+      @if(filterValue) {
+        <button matSuffix mat-icon-button aria-label="Clear" (click)="clearFilter()">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </mat-form-field>
+
+    <mat-form-field [appearance]="appearance()">
+      <mat-label>Filter by Category</mat-label>
+      <mat-select [(value)]="selectedCategoryId" (selectionChange)="applyCategoryFilter($event)">
+        <mat-option value="">All</mat-option>
+        @for(category of categories; track category.title) {
+          <mat-option [value]="category.title">
+            <mat-icon>{{ category.icon }}</mat-icon>
+            {{ category.title }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <button mat-button aria-label="Add transaction" (click)="openAddTransactionDialog()">
     <mat-icon>add</mat-icon>
+    Add transaction
   </button>
 
   <div class="table-container">
@@ -68,6 +90,18 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>date</th>
         <td mat-cell *matCellDef="let element">
           <div>{{ getFormattedDate(element.date) }}</div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button aria-label="Edit" (click)="openEditTransactionDialog(element)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button aria-label="Delete" (click)="openDeleteTransactionDialog(element)">
+            <mat-icon>delete</mat-icon>
+          </button>
         </td>
       </ng-container>
 

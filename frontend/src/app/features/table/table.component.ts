@@ -21,11 +21,16 @@ import { InputsAppearanceService } from "../../core/services/appearance.service"
 import { MatCheckbox } from "@angular/material/checkbox";
 import { MatIcon } from "@angular/material/icon";
 import { FormsModule } from "@angular/forms";
-import { MatIconButton } from "@angular/material/button";
+import { MatButton, MatIconButton } from "@angular/material/button";
 import { DateService } from "../../core/services/date.service";
 import { MatDialog } from "@angular/material/dialog";
 import { TransactionAddComponent } from "../transactions/transaction-add/transaction-add.component";
 import { Transaction } from "../../core/interfaces/transaction.interface";
+import { MatDatepickerInputEvent, MatDatepickerModule } from "@angular/material/datepicker";
+import { TransactionEditComponent } from "../transactions/transaction-edit/transaction-edit.component";
+import { ConfirmDialogComponent } from "../confirm-dialog/confirm-dialog.component";
+import { MatGridList, MatGridTile } from "@angular/material/grid-list";
+import { CategoryService } from "../../core/services/category.service";
 
 @Component({
   selector: 'app-table',
@@ -55,7 +60,11 @@ import { Transaction } from "../../core/interfaces/transaction.interface";
     MatIcon,
     FormsModule,
     MatIconButton,
-    MatSuffix
+    MatSuffix,
+    MatDatepickerModule,
+    MatGridTile,
+    MatGridList,
+    MatButton
   ],
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss'],
@@ -72,6 +81,7 @@ import { Transaction } from "../../core/interfaces/transaction.interface";
 export default class TableComponent implements OnInit, AfterViewInit {
   constructor(
     private transactionService: TransactionService,
+    private categoryService: CategoryService,
     private dateService: DateService,
     private dialog: MatDialog
   ) {}
@@ -79,7 +89,7 @@ export default class TableComponent implements OnInit, AfterViewInit {
   financeRecords: Transaction[] = [];
   categories: Category[] = [];
 
-  displayedColumns: string[] = ['select', 'transactionId', 'categoryTitle', 'description', 'amount', 'date'];
+  displayedColumns: string[] = ['select', 'transactionId', 'categoryTitle', 'description', 'amount', 'date', 'actions'];
   selection: SelectionModel<Transaction> = new SelectionModel<Transaction>(true, []);
   filteredTransactions: MatTableDataSource<Transaction> = new MatTableDataSource<Transaction>(this.financeRecords);
 
@@ -90,9 +100,12 @@ export default class TableComponent implements OnInit, AfterViewInit {
 
   filterValue: string = '';
   selectedCategoryId: string | number = '';
+  startDate?: Date | null;
+  endDate?: Date | null;
 
   ngOnInit(): void {
     this.fetchTransactions();
+    this.fetchCategories();
   }
 
   ngAfterViewInit(): void {
@@ -112,12 +125,41 @@ export default class TableComponent implements OnInit, AfterViewInit {
     });
   }
 
+  fetchCategories(): void {
+    this.categoryService.getAllCategories().subscribe({
+      next: (categories: Category[]): void => {
+        this.categories = categories;
+      },
+      error: (error) => console.error('Error fetching currencies:', error)
+    });
+  }
+
   applyFilter(): void {
     this.filteredTransactions.filter = this.filterValue.trim().toLowerCase();
+    this.filteredTransactions.data = this.financeRecords.filter(transaction =>
+      transaction.description.toLowerCase().includes(this.filterValue.trim().toLowerCase()) &&
+      (!this.selectedCategoryId || transaction.categoryTitle === this.selectedCategoryId) &&
+      (!this.startDate || new Date(transaction.date) >= this.startDate) &&
+      (!this.endDate || new Date(transaction.date) <= this.endDate)
+    );
   }
 
   applyCategoryFilter(event: MatSelectChange): void {
     this.selectedCategoryId = event.value;
+    this.applyFilter();
+  }
+
+  applyDateFilter(): void {
+    this.applyFilter();
+  }
+
+  onDateChange(event: MatDatepickerInputEvent<Date>, pickerType: string): void {
+    if (pickerType === 'start') {
+      this.startDate = event.value;
+    } else if (pickerType === 'end') {
+      this.endDate = event.value;
+    }
+    this.applyDateFilter();
   }
 
   isAllSelected(): boolean {
@@ -134,6 +176,9 @@ export default class TableComponent implements OnInit, AfterViewInit {
 
   clearFilter(): void {
     this.filterValue = '';
+    this.selectedCategoryId = '';
+    this.startDate = undefined;
+    this.endDate = undefined;
     this.applyFilter();
   }
 
@@ -144,6 +189,34 @@ export default class TableComponent implements OnInit, AfterViewInit {
   openAddTransactionDialog(): void {
     const dialogRef = this.dialog.open(TransactionAddComponent, {
       width: '400px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.fetchTransactions();
+      }
+    });
+  }
+
+  openDeleteTransactionDialog(transaction: Transaction): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '300px',
+      data: { message: `Are you sure you want to delete this transaction?` }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.transactionService.deleteTransaction(transaction.transactionId).subscribe(() => {
+          this.fetchTransactions();
+        });
+      }
+    });
+  }
+
+  openEditTransactionDialog(transaction: Transaction): void {
+    const dialogRef = this.dialog.open(TransactionEditComponent, {
+      width: '400px',
+      data: { transaction }
     });
 
     dialogRef.afterClosed().subscribe(result => {

@@ -20,7 +20,7 @@ public class CurrencyRepository : ICurrencyRepository
 
     public async Task<int?> GetCurrencyIdByCodeAsync(string currencyCode)
     {
-        var currency = await _context.Currencies
+        Currency? currency = await _context.Currencies
             .FirstOrDefaultAsync(c => c.Code == currencyCode);
         return currency?.CurrencyId;
     }
@@ -29,7 +29,7 @@ public class CurrencyRepository : ICurrencyRepository
     {
         if (!_context.Currencies.Any())
         {
-            var currencies = new[]
+            Currency[] currencies = new[]
             {
                 new Currency { Code = "PLN", Name = "Polish Zloty" },
                 new Currency { Code = "USD", Name = "US Dollar" },

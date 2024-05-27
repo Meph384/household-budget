@@ -20,7 +20,7 @@ public class CategoryRepository : ICategoryRepository
 
     public async Task<int?> GetCategoryIdByTitleAsync(string categoryTitle)
     {
-        var category = await _context.Categories
+        Category? category = await _context.Categories
             .FirstOrDefaultAsync(c => c.Title == categoryTitle);
         return category?.CategoryId;
     }
@@ -29,7 +29,7 @@ public class CategoryRepository : ICategoryRepository
     {
         if (!_context.Categories.Any())
         {
-            var categories = new List<Category>
+            List<Category> categories = new List<Category>
             {
                 new Category { Title = "Groceries", Icon = "apple", Type = "Expense" },
                 new Category { Title = "Rent", Icon = "house", Type = "Expense" },

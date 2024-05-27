@@ -19,11 +19,24 @@ public class TransactionRepository : ITransactionRepository
         _currencyRepository = currencyRepository;
     }
 
-    public async Task<List<TransactionDto>> GetAllTransactionsAsync()
+    public async Task<List<TransactionDto>> GetAllTransactionsAsync(DateTime? startDate = null, DateTime? endDate = null)
     {
-        return await _context.Transactions
+        IQueryable<Transaction> query = _context.Transactions
             .Include(t => t.Category)
             .Include(t => t.Currency)
+            .AsQueryable();
+
+        if (startDate.HasValue)
+        {
+            query = query.Where(t => t.Date >= startDate.Value);
+        }
+
+        if (endDate.HasValue)
+        {
+            query = query.Where(t => t.Date <= endDate.Value);
+        }
+
+        return await query
             .Select(t => new TransactionDto
             {
                 TransactionId = t.TransactionId,
@@ -51,11 +64,30 @@ public class TransactionRepository : ITransactionRepository
         return transaction;
     }
 
+    public async Task<bool> DeleteTransactionAsync(int transactionId)
+    {
+        Transaction? transaction = await _context.Transactions.FindAsync(transactionId);
+        if (transaction == null)
+        {
+            return false;
+        }
 
+        _context.Transactions.Remove(transaction);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<Transaction> UpdateTransactionAsync(Transaction transaction)
+    {
+        _context.Transactions.Update(transaction);
+        await _context.SaveChangesAsync();
+        return transaction;
+    }
+    
     public async Task SeedTransactionsAsync()
     {
-        var categories = await _context.Categories.ToListAsync();
-        var currencies = await _context.Currencies.ToListAsync();
+        List<Category> categories = await _context.Categories.ToListAsync();
+        List<Currency> currencies = await _context.Currencies.ToListAsync();
 
         if (!categories.Any())
         {
@@ -70,7 +102,7 @@ public class TransactionRepository : ITransactionRepository
         
         if (!_context.Transactions.Any())
         {
-            var transactions = new List<Transaction>
+            List<Transaction> transactions = new List<Transaction>
             {
                 new Transaction
                 {

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Observable, Subject } from "rxjs";
+import { Observable } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { Transaction } from "../interfaces/transaction.interface";
 
@@ -19,5 +19,13 @@ export class TransactionService {
 
   addTransaction(transaction: Transaction): Observable<Transaction> {
     return this.http.post<Transaction>(this.apiUrl, transaction);
+  }
+
+  deleteTransaction(transactionId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${transactionId}`);
+  }
+
+  updateTransaction(transactionId: number, transaction: Transaction): Observable<Transaction> {
+    return this.http.put<Transaction>(`${this.apiUrl}/${transactionId}`, transaction);
   }
 }

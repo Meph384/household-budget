@@ -1,9 +1,9 @@
-<h2 mat-dialog-title>Add Transaction</h2>
+<h2 mat-dialog-title>Edit Transaction</h2>
 <mat-dialog-content>
-  <form (ngSubmit)="onSubmit()">
+  <form>
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Category</mat-label>
-      <mat-select [(ngModel)]="transaction.categoryTitle" name="category" required>
+      <mat-select [(ngModel)]="transaction.categoryTitle" name="categoryTitle" required>
         @for(category of categories; track category.title) {
           <mat-option [value]="category.title">
             <mat-icon>{{ category.icon }}</mat-icon>
@@ -24,24 +24,26 @@
     </mat-form-field>
 
     <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Currency</mat-label>
+      <mat-select [(ngModel)]="transaction.currencyCode" name="currencyCode" required>
+        @for(currency of currencies; track currency.currencyId) {
+          <mat-option [value]="currency.code">
+            {{ currency.code }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
       <mat-label>Date</mat-label>
       <input matInput [matDatepicker]="picker" [(ngModel)]="transaction.date" name="date" required>
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Currency</mat-label>
-      <mat-select [(ngModel)]="transaction.currencyCode" name="currency" required>
-        <mat-option *ngFor="let currency of currencies" [value]="currency.code">
-          {{ currency.name }} ({{ currency.code }})
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
     <mat-dialog-actions>
-      <button mat-button (click)="onNoClick()">Cancel</button>
-      <button mat-raised-button color="primary" type="submit">Add</button>
+      <button mat-button (click)="onCancel()">Cancel</button>
+      <button mat-raised-button color="primary" (click)="save()">Save</button>
     </mat-dialog-actions>
   </form>
 </mat-dialog-content>
