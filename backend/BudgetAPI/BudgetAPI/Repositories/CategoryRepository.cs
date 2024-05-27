@@ -18,6 +18,13 @@ public class CategoryRepository : ICategoryRepository
         return await _context.Categories.ToListAsync();
     }
 
+    public async Task<int?> GetCategoryIdByTitleAsync(string categoryTitle)
+    {
+        var category = await _context.Categories
+            .FirstOrDefaultAsync(c => c.Title == categoryTitle);
+        return category?.CategoryId;
+    }
+
     public async Task SeedCategoriesAsync()
     {
         if (!_context.Categories.Any())

@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, inject, OnInit, Signal, viewChild, ViewChild } from "@angular/core";
-import { Transaction } from "../../core/models/transaction.model";
 import {
   MatCell,
   MatCellDef,
@@ -10,9 +9,8 @@ import {
   MatRowDef, MatTable, MatTableDataSource
 } from "@angular/material/table";
 import { DatePipe, NgForOf } from "@angular/common";
-import { MatFormField, MatInput, MatLabel } from "@angular/material/input";
+import { MatFormField, MatInput, MatLabel, MatSuffix } from "@angular/material/input";
 import { MatSort, MatSortModule } from "@angular/material/sort";
-import { CategoryService } from "../../core/services/category.service";
 import { Category } from "../../core/interfaces/category.interface";
 import { MatOption, MatSelect, MatSelectChange } from "@angular/material/select";
 import { TransactionService } from "../../core/services/transaction.service";
@@ -24,6 +22,10 @@ import { MatCheckbox } from "@angular/material/checkbox";
 import { MatIcon } from "@angular/material/icon";
 import { FormsModule } from "@angular/forms";
 import { MatIconButton } from "@angular/material/button";
+import { DateService } from "../../core/services/date.service";
+import { MatDialog } from "@angular/material/dialog";
+import { TransactionAddComponent } from "../transactions/transaction-add/transaction-add.component";
+import { Transaction } from "../../core/interfaces/transaction.interface";
 
 @Component({
   selector: 'app-table',
@@ -52,7 +54,8 @@ import { MatIconButton } from "@angular/material/button";
     MatPaginator,
     MatIcon,
     FormsModule,
-    MatIconButton
+    MatIconButton,
+    MatSuffix
   ],
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss'],
@@ -69,13 +72,12 @@ import { MatIconButton } from "@angular/material/button";
 export default class TableComponent implements OnInit, AfterViewInit {
   constructor(
     private transactionService: TransactionService,
-    private categoryService: CategoryService
+    private dateService: DateService,
+    private dialog: MatDialog
   ) {}
 
   financeRecords: Transaction[] = [];
   categories: Category[] = [];
-  categoryMap: Map<number, string> = new Map();
-  newRecordId: number | null = null;
 
   displayedColumns: string[] = ['select', 'transactionId', 'categoryTitle', 'description', 'amount', 'date'];
   selection: SelectionModel<Transaction> = new SelectionModel<Transaction>(true, []);
@@ -91,10 +93,6 @@ export default class TableComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.fetchTransactions();
-    this.fetchCategories();
-    this.transactionService.newTransaction$.subscribe(transaction => {
-      this.addNewTransaction(transaction);
-    })
   }
 
   ngAfterViewInit(): void {
@@ -108,19 +106,9 @@ export default class TableComponent implements OnInit, AfterViewInit {
         this.financeRecords = res;
         this.filteredTransactions.data = this.financeRecords;
         this.filteredTransactions.sort = this.sort;
+        console.log(this.financeRecords);
       },
       error: (error) => console.error('Error fetching transactions.', error)
-    });
-  }
-
-  fetchCategories(): void {
-    this.categoryService.getAllCategories().subscribe({
-      next: (categories: Category[]): void => {
-        this.categories = categories;
-        this.categoryMap = new Map(categories.map(category => [category.categoryId, category.title]));
-        this.updateCategoryTitles();
-      },
-      error: (error) => console.error('Error fetching categories:', error)
     });
   }
 
@@ -130,15 +118,6 @@ export default class TableComponent implements OnInit, AfterViewInit {
 
   applyCategoryFilter(event: MatSelectChange): void {
     this.selectedCategoryId = event.value;
-    this.updateFilteredTransactions();
-  }
-
-  private updateFilteredTransactions(): void {
-    if (this.selectedCategoryId) {
-      this.filteredTransactions.data = this.financeRecords.filter(transaction => transaction.categoryId === this.selectedCategoryId);
-    } else {
-      this.filteredTransactions.data = this.financeRecords;
-    }
   }
 
   isAllSelected(): boolean {
@@ -158,32 +137,19 @@ export default class TableComponent implements OnInit, AfterViewInit {
     this.applyFilter();
   }
 
-  checkboxLabel(row?: Transaction): string {
-    if (!row) {
-      return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
-    }
-    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.categoryId + 1}`;
+  getFormattedDate(dateString: string): string {
+    return this.dateService.formatDateOnly(dateString);
   }
 
-  getAnimationState(transactionId: number): string {
-    return this.newRecordId === transactionId ? 'added' : 'default';
-  }
+  openAddTransactionDialog(): void {
+    const dialogRef = this.dialog.open(TransactionAddComponent, {
+      width: '400px'
+    });
 
-  private updateCategoryTitles(): void {
-    if (this.categoryMap.size > 0) {
-      this.financeRecords.forEach((transaction: Transaction): void => {
-        transaction['categoryTitle'] = this.categoryMap.get(transaction.categoryId) || 'Unknown';
-      });
-      this.filteredTransactions.data = [...this.financeRecords];
-    }
-  }
-
-  private addNewTransaction(newTransaction: Transaction): void {
-    this.financeRecords.push(newTransaction);
-    this.updateCategoryTitles();
-    this.filteredTransactions.data = this.financeRecords;
-    this.newRecordId = newTransaction.transactionId!;
-
-    setTimeout(() => this.newRecordId = null, 1000);
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.fetchTransactions();
+      }
+    });
   }
 }

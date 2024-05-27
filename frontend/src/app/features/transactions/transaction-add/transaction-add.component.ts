@@ -23,7 +23,9 @@ import { MatIcon } from "@angular/material/icon";
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from "@angular/material/dialog";
 import { MatButton } from "@angular/material/button";
 import { Category } from "../../../core/interfaces/category.interface";
-import { Transaction } from "../../../core/models/transaction.model";
+import { Transaction } from "../../../core/interfaces/transaction.interface";
+import { Currency } from "../../../core/interfaces/currency.interface";
+import { CurrencyService } from "../../../core/services/currency.service";
 
 @Component({
   selector: "app-transaction-add",
@@ -53,18 +55,29 @@ import { Transaction } from "../../../core/models/transaction.model";
   styleUrls: ["./transaction-add.component.scss"]
 })
 export class TransactionAddComponent implements OnInit {
-  transaction: Transaction = new Transaction();
+  transaction: Transaction = {
+    transactionId: 0,
+    categoryTitle: '',
+    currencyCode: '',
+    description: '',
+    amount: 0,
+    date: new Date()
+  };
+
   categories: Category[] = [];
+  currencies: Currency[] = [];
 
   constructor(
     private transactionService: TransactionService,
     private categoryService: CategoryService,
+    private currencyService: CurrencyService,
     public dialogRef: MatDialogRef<TransactionAddComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
   ngOnInit(): void {
     this.fetchCategories();
+    this.fetchCurrencies();
   }
 
   fetchCategories(): void {
@@ -76,17 +89,28 @@ export class TransactionAddComponent implements OnInit {
     });
   }
 
+  fetchCurrencies(): void {
+    this.currencyService.getAllCurrencies().subscribe({
+      next: (currencies: Currency[]): void => {
+        this.currencies = currencies;
+        console.log(currencies);
+      },
+      error: (error) => console.error('Error fetching currencies:', error)
+    });
+  }
+
   onNoClick(): void {
     this.dialogRef.close();
   }
 
   onSubmit(): void {
-    this.transactionService.addTransaction(this.transaction).subscribe({
-      next: (result: Transaction): void => {
-        this.transactionService.notifyNewTransaction(result);
-        this.dialogRef.close(result);
-      },
-      error: (error) => console.error('Error adding transaction:', error)
-    });
+    if(this.transaction) {
+      this.transactionService.addTransaction(this.transaction).subscribe({
+        next: (result: Transaction): void => {
+          this.dialogRef.close(result);
+        },
+        error: (error) => console.error('Error adding transaction:', error)
+      });
+    }
   }
 }

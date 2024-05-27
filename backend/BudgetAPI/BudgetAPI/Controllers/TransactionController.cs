@@ -10,38 +10,52 @@ namespace BudgetAPI.Controllers;
 public class TransactionController : ControllerBase
 {
     private readonly ITransactionRepository _transactionRepository;
-
-    public TransactionController(ITransactionRepository transactionRepository)
+    private readonly ICategoryRepository _categoryRepository;
+    private readonly ICurrencyRepository _currencyRepository;
+    public TransactionController(ITransactionRepository transactionRepository, ICurrencyRepository currencyRepository, ICategoryRepository categoryRepository)
     {
         _transactionRepository = transactionRepository;
+        _categoryRepository = categoryRepository;
+        _currencyRepository = currencyRepository;
     }
 
     [HttpGet]
-    public async Task<ActionResult> GetAllTransactions()
+    public async Task<ActionResult<TransactionDto>> GetAllTransactions()
     {
         return Ok(await _transactionRepository.GetAllTransactionsAsync());
     }
 
     [HttpPost]
-    public async Task<ActionResult<Transaction>> AddTransaction([FromBody] CreateTransactionDTO transactionDto)
+    public async Task<ActionResult<Transaction>> AddTransaction([FromBody] CreateTransactionDto transactionDto)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
+        var categoryId = await _categoryRepository.GetCategoryIdByTitleAsync(transactionDto.CategoryTitle);
+        if (categoryId == null)
+        {
+            return BadRequest("Invalid category title.");
+        }
+
+        var currencyId = await _currencyRepository.GetCurrencyIdByCodeAsync(transactionDto.CurrencyCode);
+        if (currencyId == null)
+        {
+            return BadRequest("Invalid currency code.");
+        }
+
         var transaction = new Transaction
         {
-            CategoryId = transactionDto.CategoryId,
+            CategoryId = categoryId.Value,
+            CurrencyId = currencyId.Value,
             Description = transactionDto.Description,
             Amount = transactionDto.Amount,
             Date = transactionDto.Date
         };
 
-        
         var createdTransaction = await _transactionRepository.AddTransactionAsync(transaction);
-        return CreatedAtAction(nameof(GetTransaction), new { id = createdTransaction.TransactionId },
-            createdTransaction);
+        return CreatedAtAction(nameof(GetAllTransactions), new { id = createdTransaction.TransactionId }, createdTransaction);
     }
 
     [HttpGet("{id}")]
