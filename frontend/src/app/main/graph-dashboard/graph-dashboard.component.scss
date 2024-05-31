@@ -1,0 +1,25 @@
+.dashboard-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  box-sizing: border-box;
+  padding: 16px;
+}
+
+.top-card {
+  flex: 1 1 calc(50% - 16px);
+  box-sizing: border-box;
+}
+
+.bottom-card {
+  flex: 1 1 100%;
+  box-sizing: border-box;
+  max-height: 700px;
+}
+
+@media (max-width: 768px) {
+  .top-card,
+  .bottom-card {
+    flex: 1 1 100%;
+  }
+}

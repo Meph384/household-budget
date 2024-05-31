@@ -9,5 +9,9 @@ export const routes: Routes = [
   {
     path: 'table',
     loadComponent: () => import('./features/table/table.component')
+  },
+  {
+    path: 'graph-dashboard',
+    loadComponent: () => import('./main/graph-dashboard/graph-dashboard.component')
   }
 ];
