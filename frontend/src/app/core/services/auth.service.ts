@@ -4,6 +4,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment } from "../../../environments/environment";
+import { Router } from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class AuthService {
   private baseUrl: string = environment.apiUrl + "/Auth";
   private jwtHelper = new JwtHelperService();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   register(user: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/register`, user);
@@ -30,6 +31,7 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
+    this.router.navigate(['/log-in']);
   }
 
   isAuthenticated(): boolean {
