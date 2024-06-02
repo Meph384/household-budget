@@ -119,7 +119,6 @@ export default class TableComponent implements OnInit, AfterViewInit {
         this.financeRecords = res;
         this.filteredTransactions.data = this.financeRecords;
         this.filteredTransactions.sort = this.sort;
-        console.log(this.financeRecords);
       },
       error: (error) => console.error('Error fetching transactions.', error)
     });
@@ -221,6 +220,7 @@ export default class TableComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
+        console.log("xd");
         this.fetchTransactions();
       }
     });

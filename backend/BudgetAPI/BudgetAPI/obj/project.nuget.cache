@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "KRccgErvl+DAlY0V1NPUYyEBZELiopoGIqu04eYhXnX6NFJxkY9QUwvMpUbhKN27HX7vCnu4b1MPbEHS+ySyjg==",
+  "dgSpecHash": "m8bZ1S5UbHlDoHbYstmMr1d6DGDMN1hGNuOKby6vl0Ypr6UE6IqAsuet37A3f+a2X/gChf6b48/6MozOqd1INA==",
   "success": true,
   "projectFilePath": "/Users/jakubkozak/Desktop/ZUT/Inzynierka/backend/BudgetAPI/BudgetAPI/BudgetAPI.csproj",
   "expectedPackageFiles": [
     "/Users/jakubkozak/.nuget/packages/azure.core/1.35.0/azure.core.1.35.0.nupkg.sha512",
     "/Users/jakubkozak/.nuget/packages/azure.identity/1.10.3/azure.identity.1.10.3.nupkg.sha512",
+    "/Users/jakubkozak/.nuget/packages/bcrypt.net-next/4.0.3/bcrypt.net-next.4.0.3.nupkg.sha512",
     "/Users/jakubkozak/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
     "/Users/jakubkozak/.nuget/packages/microsoft.aspnetcore.authentication.jwtbearer/8.0.6/microsoft.aspnetcore.authentication.jwtbearer.8.0.6.nupkg.sha512",
     "/Users/jakubkozak/.nuget/packages/microsoft.aspnetcore.openapi/8.0.4/microsoft.aspnetcore.openapi.8.0.4.nupkg.sha512",

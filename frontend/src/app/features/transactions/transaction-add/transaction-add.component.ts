@@ -61,7 +61,8 @@ export class TransactionAddComponent implements OnInit {
     currencyCode: '',
     description: '',
     amount: 0,
-    date: new Date()
+    date: new Date(),
+    userId: ''
   };
 
   categories: Category[] = [];

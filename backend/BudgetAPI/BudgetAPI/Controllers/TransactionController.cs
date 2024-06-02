@@ -1,12 +1,15 @@
+using System.Security.Claims;
 using BudgetAPI.DTOs;
 using BudgetAPI.Interfaces;
 using BudgetAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class TransactionController : ControllerBase
 {
     private readonly ITransactionRepository _transactionRepository;
@@ -20,13 +23,18 @@ public class TransactionController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TransactionDto>>> GetAllTransactions(DateTime? startDate, DateTime? endDate)
+    public async Task<ActionResult<IEnumerable<TransactionDto>>> GetAllTransactions(string userId, DateTime? startDate, DateTime? endDate)
     {
-        List<TransactionDto> transactions = await _transactionRepository.GetAllTransactionsAsync(startDate, endDate);
+        if (string.IsNullOrEmpty(userId))
+        {
+            return BadRequest("User ID is required.");
+        }
+
+        List<TransactionDto> transactions = await _transactionRepository.GetAllTransactionsAsync(userId, startDate, endDate);
         return Ok(transactions);
     }
 
-    [HttpPost]
+    [HttpPost("AddTransaction")]
     public async Task<ActionResult<Transaction>> AddTransaction([FromBody] CreateTransactionDto transactionDto)
     {
         if (!ModelState.IsValid)
@@ -45,18 +53,25 @@ public class TransactionController : ControllerBase
         {
             return BadRequest("Invalid currency code.");
         }
-
+        
+        string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized();
+        }
+        
         Transaction transaction = new Transaction
         {
             CategoryId = categoryId.Value,
             CurrencyId = currencyId.Value,
             Description = transactionDto.Description,
             Amount = transactionDto.Amount,
-            Date = transactionDto.Date
+            Date = transactionDto.Date,
+            UserId = int.Parse(userId)
         };
 
-        Transaction createdTransaction = await _transactionRepository.AddTransactionAsync(transaction);
-        return CreatedAtAction(nameof(GetAllTransactions), new { id = createdTransaction.TransactionId }, createdTransaction);
+        await _transactionRepository.AddTransactionAsync(transaction);
+        return Ok(true);
     }
 
     [HttpDelete("{id}")]
@@ -102,8 +117,8 @@ public class TransactionController : ControllerBase
         existingTransaction.Date = transactionDto.Date;
         existingTransaction.CurrencyId = currency.Value;
 
-        Transaction updatedTransaction = await _transactionRepository.UpdateTransactionAsync(existingTransaction);
-        return Ok(updatedTransaction);
+        await _transactionRepository.UpdateTransactionAsync(existingTransaction);
+        return Ok(true);
     }
 
     

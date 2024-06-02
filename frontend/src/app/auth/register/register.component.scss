@@ -1,0 +1,38 @@
+.register-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100dvh;
+
+  mat-card {
+    width: 400px;
+    padding: 20px;
+    position: relative;
+
+    mat-card-title {
+      padding: 20px;
+    }
+    .register-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+  }
+
+  .back-to-login {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    left: 35px;
+    bottom: 25px;
+    cursor: pointer;
+    color: #007bff;
+    font-size: 14px;
+  }
+
+  .back-to-login span {
+    margin-right: 8px;
+    font-size: 16px;
+  }
+}

@@ -1,27 +1,39 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { HttpClient } from "@angular/common/http";
-import { catchError, Observable, of } from "rxjs";
-import { environment } from '../../../environments/environment';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { environment } from "../../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl: string = environment.apiUrl;
+  private baseUrl: string = environment.apiUrl + "/Auth";
+  private jwtHelper = new JwtHelperService();
 
   constructor(private http: HttpClient) {}
 
-  signup(email: string, password: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/signup`, { email, password });
+  register(user: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/register`, user);
   }
 
-  signin(email: string, password: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/signin`, { email, password });
+  login(user: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/login`, user).pipe(
+      tap((response: any) => {
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('userId', response.userId);
+      })
+    );
   }
 
-  isAuthenticated(): Observable<boolean> {
-    return this.http
-      .get<boolean>(this.apiUrl)
-      .pipe(catchError(() => of(false)));
+  logout(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+  }
+
+  isAuthenticated(): boolean {
+    const token = localStorage.getItem('token');
+    return token !== null && !this.jwtHelper.isTokenExpired(token);
   }
 }
