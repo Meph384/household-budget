@@ -1,5 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { Chart } from "chart.js/auto";
+import { TransactionService } from "../../../core/services/transaction.service";
+import { GroupedData } from "../../../core/interfaces/category.interface";
 
 @Component({
   selector: 'app-combo-chart',
@@ -12,34 +14,45 @@ export class ComboChartComponent implements OnInit {
   chart: any = [];
   delayed: boolean = false;
 
+  constructor(private transactionService: TransactionService) {}
+
   ngOnInit() {
-    this.createChart();
+    this.transactionService.getCategoriesGroupedByMonth().subscribe((data: GroupedData) => {
+      console.log(data);
+      const expenseData = data['Expense'] || {};
+      const incomeData = data['Income'] || {};
+
+      const labels = Array.from(new Set([...Object.keys(expenseData), ...Object.keys(incomeData)])).sort();
+      const spendings = labels.map(label => expenseData[label] || 0);
+      const earnings = labels.map(label => incomeData[label] || 0);
+      const balance = earnings.map((income, index) => income - spendings[index]);
+      console.log(earnings, spendings, balance);
+      this.createChart(labels, earnings, spendings, balance);
+    });
   }
 
-  createChart(){
+  createChart(labels: string[], earnings: number[], spendings: number[], balance: number[]) {
     this.chart = new Chart("ComboChart", {
       type: 'line',
       data: {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        labels: labels,
         datasets: [
           {
             type: 'bar',
             label: "Income",
-            data: ['467','576', '572', '79', '92',
-              '574', '573', '576'],
+            data: earnings,
             backgroundColor: 'rgba(0,255,0,0.35)'
           },
           {
             type: 'bar',
             label: "Spendings",
-            data: ['542', '542', '536', '327', '17',
-              '0.00', '538', '541'],
+            data: spendings,
             backgroundColor: 'rgba(255,0,0,0.35)'
           },
           {
             type: 'line',
             label: "Balance",
-            data: ['542', '542', '536', '327', '17'],
+            data: balance,
             borderColor: 'rgba(255,255,255)',
             fill: false,
             order: 1
@@ -72,10 +85,11 @@ export class ComboChartComponent implements OnInit {
           },
           title: {
             display: true,
-            text: 'Chart.js Combined Line/Bar Chart'
+            text: 'Income, Spendings, and Balance by Month'
           }
         }
       }
     });
   }
+
 }

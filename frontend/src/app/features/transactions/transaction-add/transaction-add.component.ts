@@ -85,6 +85,7 @@ export class TransactionAddComponent implements OnInit {
     this.categoryService.getAllCategories().subscribe({
       next: (categories: Category[]): void => {
         this.categories = categories;
+        console.log(this.categories);
       },
       error: (error) => console.error('Error fetching categories:', error)
     });
@@ -94,7 +95,6 @@ export class TransactionAddComponent implements OnInit {
     this.currencyService.getAllCurrencies().subscribe({
       next: (currencies: Currency[]): void => {
         this.currencies = currencies;
-        console.log(currencies);
       },
       error: (error) => console.error('Error fetching currencies:', error)
     });

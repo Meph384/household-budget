@@ -224,4 +224,65 @@ public class TransactionRepository : ITransactionRepository
             await _context.SaveChangesAsync();
         }
     }
+    
+        public async Task<IEnumerable<CategorySpending>> GetSpendingsByCategoryForCurrentYearAsync()
+        {
+            var currentYear = DateTime.Now.Year;
+            return await _context.Transactions
+                .Where(t => t.Date.Year == currentYear && t.Category.Type == "Expense")
+                .GroupBy(t => t.Category)
+                .Select(g => new CategorySpending 
+                {
+                    Category = g.Key,
+                    TotalAmount = g.Sum(t => t.Amount)
+                })
+                .ToListAsync();
+        }
+
+
+        public async Task<Dictionary<string, Dictionary<string, double>>> GetCategoriesGroupedByMonthAsync()
+        {
+            var result = await _context.Transactions
+                .GroupBy(t => new { t.Category.Type, Month = t.Date.Month, Year = t.Date.Year })
+                .Select(g => new 
+                {
+                    g.Key.Type,
+                    g.Key.Month,
+                    g.Key.Year,
+                    TotalAmount = g.Sum(t => t.Amount)
+                })
+                .ToListAsync();
+
+            return result
+                .GroupBy(x => x.Type)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.GroupBy(x => $"{x.Year}-{x.Month:00}")
+                          .ToDictionary(gg => gg.Key, gg => gg.Sum(x => x.TotalAmount))
+                );
+        }
+
+        public async Task<Dictionary<string, Dictionary<string, double>>> GetCategoriesGroupedByDayForLast14DaysAsync()
+        {
+            var startDate = DateTime.Now.AddDays(-14);
+            var result = await _context.Transactions
+                .Where(t => t.Date >= startDate)
+                .GroupBy(t => new { t.Category.Type, Date = t.Date.Date })
+                .Select(g => new 
+                {
+                    g.Key.Type,
+                    g.Key.Date,
+                    TotalAmount = g.Sum(t => t.Amount)
+                })
+                .ToListAsync();
+
+            return result
+                .GroupBy(x => x.Type)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.GroupBy(x => x.Date.ToString("yyyy-MM-dd"))
+                          .ToDictionary(gg => gg.Key, gg => gg.Sum(x => x.TotalAmount))
+                );
+        }
+
 }

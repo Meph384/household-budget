@@ -135,6 +135,27 @@ public class TransactionController : ControllerBase
         return NotFound();
     }
 
+    [HttpGet("GetSpendingsByCategory")]
+    public async Task<IActionResult> GetSpendingsByCategory()
+    {
+        var result = await _transactionRepository.GetSpendingsByCategoryForCurrentYearAsync();
+        return Ok(result);
+    }
+
+    [HttpGet("GetCategoriesGroupedByMonth")]
+    public async Task<IActionResult> GetCategoriesGroupedByMonth()
+    {
+        var result = await _transactionRepository.GetCategoriesGroupedByMonthAsync();
+        return Ok(result);
+    }
+
+    [HttpGet("GetCategoriesGroupedByDay")]
+    public async Task<IActionResult> GetCategoriesGroupedByDay()
+    {
+        var result = await _transactionRepository.GetCategoriesGroupedByDayForLast14DaysAsync();
+        return Ok(result);
+    }
+    
     [HttpGet("Seed")]
     public async Task<bool> SeedTransactions()
     {

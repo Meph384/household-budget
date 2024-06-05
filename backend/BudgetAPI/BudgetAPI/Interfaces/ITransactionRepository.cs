@@ -11,4 +11,7 @@ public interface ITransactionRepository
     Task<bool> DeleteTransactionAsync(int transactionId);
     Task UpdateTransactionAsync(Transaction transaction);
     Task SeedTransactionsAsync();
+    Task<IEnumerable<CategorySpending>> GetSpendingsByCategoryForCurrentYearAsync();
+    Task<Dictionary<string, Dictionary<string, double>>> GetCategoriesGroupedByMonthAsync();
+    Task<Dictionary<string, Dictionary<string, double>>> GetCategoriesGroupedByDayForLast14DaysAsync();
 }

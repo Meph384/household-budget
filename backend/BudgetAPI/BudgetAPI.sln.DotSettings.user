@@ -1,0 +1,12 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;
+  &lt;PhysicalFolder Path="/Users/jakubkozak/.nuget/packages/microsoft.entityframeworkcore/6.0.1" Loaded="True" /&gt;
+  &lt;PhysicalFolder Path="/Users/jakubkozak/.nuget/packages/microsoft.entityframeworkcore/6.0.3" Loaded="True" /&gt;
+  &lt;PhysicalFolder Path="/Users/jakubkozak/.nuget/packages/microsoft.entityframeworkcore/6.0.5" Loaded="True" /&gt;
+  &lt;PhysicalFolder Path="/Users/jakubkozak/.nuget/packages/microsoft.entityframeworkcore/6.0.7" Loaded="True" /&gt;
+  &lt;PhysicalFolder Path="/Users/jakubkozak/.nuget/packages/microsoft.entityframeworkcore/7.0.10" Loaded="True" /&gt;
+  &lt;PhysicalFolder Path="/Users/jakubkozak/.nuget/packages/microsoft.entityframeworkcore/7.0.3" Loaded="True" /&gt;
+  &lt;PhysicalFolder Path="/Users/jakubkozak/.nuget/packages/microsoft.entityframeworkcore/7.0.4" Loaded="True" /&gt;
+  &lt;PhysicalFolder Path="/Users/jakubkozak/.nuget/packages/microsoft.entityframeworkcore/7.0.5" Loaded="True" /&gt;
+  &lt;PhysicalFolder Path="/Users/jakubkozak/.nuget/packages/microsoft.entityframeworkcore/8.0.4" Loaded="True" /&gt;
+&lt;/AssemblyExplorer&gt;</s:String></wpf:ResourceDictionary>

@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { catchError, Observable, throwError } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { Transaction } from "../interfaces/transaction.interface";
+import { CategorySpending, GroupedData } from "../interfaces/category.interface";
 
 @Injectable({
   providedIn: 'root'
@@ -44,5 +45,17 @@ export class TransactionService {
 
   updateTransaction(transactionId: number, transaction: Transaction): Observable<Transaction> {
     return this.http.put<Transaction>(`${this.apiUrl}/${transactionId}`, transaction);
+  }
+
+  getSpendingsByCategory(): Observable<CategorySpending[]> {
+    return this.http.get<CategorySpending[]>(`${this.apiUrl}/GetSpendingsByCategory`);
+  }
+
+  getCategoriesGroupedByMonth(): Observable<GroupedData> {
+    return this.http.get<GroupedData>(`${this.apiUrl}/GetCategoriesGroupedByMonth`);
+  }
+
+  getCategoriesGroupedByDay(): Observable<GroupedData> {
+    return this.http.get<GroupedData>(`${this.apiUrl}/GetCategoriesGroupedByDay`);
   }
 }

@@ -1,6 +1,8 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { Chart } from 'chart.js/auto'
 import { BaseChartDirective } from "ng2-charts";
+import { TransactionService } from "../../../core/services/transaction.service";
+import { GroupedData } from "../../../core/interfaces/category.interface";
 
 @Component({
   selector: 'app-horizontal-bar-chart',
@@ -12,34 +14,38 @@ import { BaseChartDirective } from "ng2-charts";
   styleUrl: './horizontal-bar-chart.component.scss'
 })
 export class HorizontalBarChartComponent implements OnInit {
-  @Input() public earnings: any;
-  @Input() public labels: any;
-  @Input() public spendings: any;
-
   chart: any = [];
   delayed: boolean = false;
 
+  constructor(private transactionService: TransactionService) {}
+
   ngOnInit() {
-    this.createChart();
+    this.transactionService.getCategoriesGroupedByDay().subscribe((data: GroupedData) => {
+      const expenseData = data['Expense'] || {};
+      const incomeData = data['Income'] || {};
+      const labels = Object.keys(expenseData);
+      const spendings = Object.values(expenseData);
+      const earnings = Object.values(incomeData);
+
+      this.createChart(labels, earnings, spendings);
+    });
   }
 
-  createChart(){
+
+  createChart(labels: string[], earnings: number[], spendings: number[]) {
     this.chart = new Chart("BarChart", {
       type: 'bar',
       data: {
-        labels: ['2022-05-10', '2022-05-11', '2022-05-12','2022-05-13',
-          '2022-05-14', '2022-05-15', '2022-05-16','2022-05-17', ],
+        labels: labels,
         datasets: [
           {
             label: "Earnings",
-            data: ['467','576', '572', '79', '92',
-              '574', '573', '576'],
+            data: earnings,
             backgroundColor: 'rgba(0,255,0,0.35)'
           },
           {
             label: "Spendings",
-            data: ['542', '542', '536', '327', '17',
-              '0.00', '538', '541'],
+            data: spendings,
             backgroundColor: 'rgba(255,0,0,0.35)'
           }
         ]
@@ -66,11 +72,11 @@ export class HorizontalBarChartComponent implements OnInit {
         plugins: {
           legend: {
             textDirection: 'column',
-              align: 'end'
+            align: 'end'
           },
           title: {
             display: true,
-            text: 'Chart.js Combined Line/Bar Chart'
+            text: 'Spendings and Earnings (Last 14 Days)'
           }
         }
       }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { Chart } from "chart.js/auto";
+import { TransactionService } from "../../../core/services/transaction.service";
 
 @Component({
   selector: 'app-doughnut-chart',
@@ -11,11 +12,18 @@ export class DoughnutChartComponent implements OnInit {
   chart: any = [];
   delayed: boolean = false;
 
+  constructor(private transactionService: TransactionService) {}
+
   ngOnInit() {
-    this.createChart();
+    this.transactionService.getSpendingsByCategory().subscribe(data => {
+      const labels = data.map(item => item.category.title);
+      const amounts = data.map(item => item.totalAmount);
+
+      this.createChart(labels, amounts);
+    });
   }
 
-  createChart() {
+  createChart(labels: string[], data: number[]) {
     const isDarkTheme = this.isDarkThemeEnabled();
     const backgroundColors = isDarkTheme ?
       [
@@ -42,11 +50,11 @@ export class DoughnutChartComponent implements OnInit {
     this.chart = new Chart("DoughnutChart", {
       type: 'doughnut',
       data: {
-        labels: ['Rent', 'Groceries', 'Salary', 'Utilities', 'Savings', 'Gym', 'Gifts', 'Fuel'],
+        labels: labels,
         datasets: [
           {
-            label: "Earnings",
-            data: ['467', '576', '572', '79', '92', '574', '573', '576'],
+            label: "Spendings",
+            data: data,
             backgroundColor: backgroundColors,
           }
         ]
