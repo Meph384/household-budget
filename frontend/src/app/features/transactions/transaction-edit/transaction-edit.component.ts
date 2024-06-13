@@ -14,35 +14,40 @@ import { TransactionService } from "../../../core/services/transaction.service";
 import { CategoryService } from "../../../core/services/category.service";
 import { CurrencyService } from "../../../core/services/currency.service";
 import { FormsModule } from "@angular/forms";
-import { MatFormField } from "@angular/material/form-field";
 import { MatOption, MatSelect } from "@angular/material/select";
-import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from "@angular/material/datepicker";
-import { MatInput, MatLabel } from "@angular/material/input";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatInputModule } from "@angular/material/input";
 import { MatButton } from "@angular/material/button";
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from "@angular/material/core";
-import { LuxonDateAdapter, MAT_LUXON_DATE_ADAPTER_OPTIONS, MAT_LUXON_DATE_FORMATS } from "@angular/material-luxon-adapter";
+import {
+  LuxonDateAdapter,
+  MAT_LUXON_DATE_ADAPTER_OPTIONS,
+  MAT_LUXON_DATE_FORMATS,
+  MatLuxonDateModule
+} from "@angular/material-luxon-adapter";
 import { ConfirmDialogComponent } from "../../confirm-dialog/confirm-dialog.component";
 import { MatIcon } from "@angular/material/icon";
+import { MatCardModule } from "@angular/material/card";
+import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "app-transaction-edit",
   templateUrl: "./transaction-edit.component.html",
   standalone: true,
   imports: [
-    MatDialogContent,
-    MatDialogTitle,
+    MatCardModule,
+    MatInputModule,
     FormsModule,
-    MatFormField,
+    MatDatepickerModule,
+    MatLuxonDateModule,
     MatSelect,
     MatOption,
-    MatDatepickerToggle,
-    MatDatepicker,
-    MatInput,
-    MatLabel,
-    MatDatepickerInput,
+    CommonModule,
+    MatIcon,
+    MatDialogContent,
     MatDialogActions,
     MatButton,
-    MatIcon
+    MatDialogTitle
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'en-US' },
